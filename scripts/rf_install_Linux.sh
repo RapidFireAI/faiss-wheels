@@ -8,13 +8,13 @@ FAISS_ENABLE_MKL=${FAISS_ENABLE_MKL:-OFF}
 # OpenBLAS installation
 function install_openblas() {
     if command -v apk &> /dev/null; then
-        apk add --no-cache openblas-dev
+        sudo apk add --no-cache openblas-dev
     elif command -v dnf &> /dev/null; then
-        dnf install -y openblas-devel
+        sudo dnf install -y openblas-devel
     elif command -v apt &> /dev/null; then
-        apt install -y libopenblas-dev
+        sudo apt install -y libopenblas-dev
     elif command -v yum &> /dev/null; then
-        yum install -y openblas-devel
+        sudo yum install -y openblas-devel
     else
         echo "Unsupported package manager. Please install OpenBLAS manually."
     fi
@@ -69,8 +69,8 @@ function install_cuda() {
     elif command -v dnf &> /dev/null; then
         # TODO: Detect DISTRO via /etc/*-release.
         local DISTRO=${DISTRO:-rhel8}
-        dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/${DISTRO}/${ARCH}/cuda-${DISTRO}.repo
-        dnf install -y \
+        sudo dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/${DISTRO}/${ARCH}/cuda-${DISTRO}.repo
+        sudo dnf install -y \
             cuda-nvcc-${CUDA_PACKAGE_VERSION} \
             cuda-profiler-api-${CUDA_PACKAGE_VERSION} \
             cuda-cudart-devel-${CUDA_PACKAGE_VERSION} \
@@ -79,8 +79,8 @@ function install_cuda() {
     elif command -v apt &> /dev/null; then
         local DISTRO=${DISTRO:-ubuntu2404}
         wget https://developer.download.nvidia.com/compute/cuda/repos/${DISTRO}/${ARCH}/cuda-keyring_1.1-1_all.deb
-        dpkg -i cuda-keyring_1.1-1_all.deb
-        apt update && apt install -y \
+        sudo dpkg -i cuda-keyring_1.1-1_all.deb
+        sudo apt update && apt install -y \
             cuda-nvcc-${CUDA_PACKAGE_VERSION} \
             cuda-profiler-api-${CUDA_PACKAGE_VERSION} \
             cuda-cudart-dev-${CUDA_PACKAGE_VERSION} \
@@ -146,11 +146,11 @@ EOF
 }
 
 # Main script execution
-# if [ "${FAISS_ENABLE_MKL^^}" = "ON" ]; then
-#     install_intel_mkl
-# else
-#     install_openblas
-# fi
+ if [ "${FAISS_ENABLE_MKL^^}" = "ON" ]; then
+     install_intel_mkl
+ else
+     install_openblas
+ fi
 
 if [ "${FAISS_GPU_SUPPORT^^}" = "CUDA" ] || [ "${FAISS_GPU_SUPPORT^^}" = "CUVS" ]; then
     install_cuda
