@@ -75,7 +75,8 @@ function install_cuda() {
             cuda-profiler-api-${CUDA_PACKAGE_VERSION} \
             cuda-cudart-devel-${CUDA_PACKAGE_VERSION} \
             libcublas-devel-${CUDA_PACKAGE_VERSION} \
-            libcurand-devel-${CUDA_PACKAGE_VERSION}
+            libcurand-devel-${CUDA_PACKAGE_VERSION} \
+	    patchelf
     elif command -v apt &> /dev/null; then
         local DISTRO=${DISTRO:-ubuntu2404}
         wget https://developer.download.nvidia.com/compute/cuda/repos/${DISTRO}/${ARCH}/cuda-keyring_1.1-1_all.deb
@@ -85,7 +86,8 @@ function install_cuda() {
             cuda-profiler-api-${CUDA_PACKAGE_VERSION} \
             cuda-cudart-dev-${CUDA_PACKAGE_VERSION} \
             libcublas-dev-${CUDA_PACKAGE_VERSION} \
-            libcurand-dev-${CUDA_PACKAGE_VERSION}
+            libcurand-dev-${CUDA_PACKAGE_VERSION} \
+	    patchelf
     else
         echo "Unsupported package manager. Please install CUDA Toolkit manually."
     fi
@@ -162,3 +164,17 @@ pip install --upgrade numpy==2.0.2
 pip install --upgrade uv
 pip install --upgrade pipx
 pip install --upgrade faiss-cpu
+pip install --upgrade auditwheel
+pip install --upgrade twine
+
+set +x
+echo "To build wheel,"
+echo "1. Edit pyproject.toml as desired (like version and possibly the name)"
+echo "2. export FAISS_OPT_LEVELS=\"generic\""
+echo "3. export FAISS_GPU_SUPPORT=CUDA"
+echo "4. uv build --wheel"
+echo "5. auditwheel repair dist/rf_faiss_gpu*.whl -w dist/repaired/"
+echo "6. export TWINE_USERNAME=__token__"
+echo "7. export TWINE_PASSWORD=\"<paste token>\""
+echo "8. twine upload dist/repaired/*"
+
