@@ -159,6 +159,6 @@ elif [ "${FAISS_GPU_SUPPORT^^}" = "ROCM" ]; then
 fi
 git submodule update --init --recursive
 pip install --upgrade numpy==2.0.2
-pip isntall --upgrade uv
+pip install --upgrade uv
 pip install --upgrade pipx
 pip install --upgrade faiss-cpu
