@@ -80,7 +80,7 @@ function install_cuda() {
         local DISTRO=${DISTRO:-ubuntu2404}
         wget https://developer.download.nvidia.com/compute/cuda/repos/${DISTRO}/${ARCH}/cuda-keyring_1.1-1_all.deb
         sudo dpkg -i cuda-keyring_1.1-1_all.deb
-        sudo apt update && apt install -y \
+        sudo apt update && sudo apt install -y \
             cuda-nvcc-${CUDA_PACKAGE_VERSION} \
             cuda-profiler-api-${CUDA_PACKAGE_VERSION} \
             cuda-cudart-dev-${CUDA_PACKAGE_VERSION} \
@@ -91,9 +91,9 @@ function install_cuda() {
     fi
     SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
     local CUDA_NO_CHARS=${CUDA_VERSION//./}
-    pip install --upgrade torch=2.8.0 --index-url "https://download.pytorch.org/whl/cu${CUDA_NO_CHARS}"
-    pip install --upgrade torchvision=0.23.0 --index-url "https://download.pytorch.org/whl/cu${CUDA_NO_CHARS}"
-    pip install --upgrade torchaudio=2.8.0 --index-url "https://download.pytorch.org/whl/cu${CUDA_NO_CHARS}"
+    pip install --upgrade torch==2.8.0 --index-url "https://download.pytorch.org/whl/cu${CUDA_NO_CHARS}"
+    pip install --upgrade torchvision==0.23.0 --index-url "https://download.pytorch.org/whl/cu${CUDA_NO_CHARS}"
+    pip install --upgrade torchaudio==2.8.0 --index-url "https://download.pytorch.org/whl/cu${CUDA_NO_CHARS}"
     $SCRIPT_DIR/rename_project.sh rf-faiss-gpu-${CUDA_PACKAGE_VERSION}
 }
 
