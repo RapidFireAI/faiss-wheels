@@ -90,8 +90,11 @@ function install_cuda() {
         echo "Unsupported package manager. Please install CUDA Toolkit manually."
     fi
     SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+    local CUDA_NO_CHARS=${CUDA_VERSION//./}
+    pip install --upgrade torch=2.8.0 --index-url "https://download.pytorch.org/whl/cu${CUDA_NO_CHARS}"
+    pip install --upgrade torchvision=0.23.0 --index-url "https://download.pytorch.org/whl/cu${CUDA_NO_CHARS}"
+    pip install --upgrade torchaudio=2.8.0 --index-url "https://download.pytorch.org/whl/cu${CUDA_NO_CHARS}"
     $SCRIPT_DIR/rename_project.sh rf-faiss-gpu-${CUDA_PACKAGE_VERSION}
-
 }
 
 # ROCm installation
@@ -154,6 +157,7 @@ if [ "${FAISS_GPU_SUPPORT^^}" = "CUDA" ] || [ "${FAISS_GPU_SUPPORT^^}" = "CUVS" 
 elif [ "${FAISS_GPU_SUPPORT^^}" = "ROCM" ]; then
     install_rocm
 fi
+git submodule update --init --recursive
 pip install --upgrade numpy==2.0.2
 pip isntall --upgrade uv
 pip install --upgrade pipx
